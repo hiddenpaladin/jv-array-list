@@ -21,6 +21,10 @@ public class ArrayList<T> implements List<T> {
         return newArray;
     }
 
+    public boolean indexCheck(int index) {
+        return (index < size && index >= 0) || index == 0;
+    }
+
     @Override
     public void add(T value) {
         if (size == elementData.length) {
@@ -35,12 +39,14 @@ public class ArrayList<T> implements List<T> {
         if (size == elementData.length) {
             elementData = grow();
         }
-        if (index > size || index < 0) {
-            throw new ArrayListIndexOutOfBoundsException("Index is invalid");
-        } else {
+        if (index == size) {
+            add(value);
+        } else if (indexCheck(index)) {
             System.arraycopy(elementData, index, elementData, index + 1, size - index);
             elementData[index] = value;
             size++;
+        } else {
+            throw new ArrayListIndexOutOfBoundsException("Index is invalid");
         }
     }
 
@@ -57,7 +63,7 @@ public class ArrayList<T> implements List<T> {
 
     @Override
     public T get(int index) {
-        if (index < size && index >= 0) {
+        if (indexCheck(index)) {
             return (T) elementData[index];
         } else {
             throw new ArrayListIndexOutOfBoundsException("index is invalid");
@@ -66,7 +72,7 @@ public class ArrayList<T> implements List<T> {
 
     @Override
     public void set(T value, int index) {
-        if (index < size && index >= 0) {
+        if (indexCheck(index)) {
             elementData[index] = value;
         } else {
             throw new ArrayListIndexOutOfBoundsException("index is invalid");
@@ -75,7 +81,7 @@ public class ArrayList<T> implements List<T> {
 
     @Override
     public T remove(int index) {
-        if (index < size && index >= 0) {
+        if (indexCheck(index)) {
             Object removed = elementData[index];
             System.arraycopy(elementData, index + 1, elementData, index, size - index - 1);
             elementData[--size] = null;
@@ -97,12 +103,9 @@ public class ArrayList<T> implements List<T> {
             }
         }
         if (index != - 1) {
-            Object removed = elementData[index];
-            System.arraycopy(elementData, index + 1, elementData, index, size - index - 1);
-            elementData[--size] = null;
-            return (T)removed;
+            return remove(index);
         } else {
-            throw new NoSuchElementException();
+            throw new NoSuchElementException("Element to remove not present");
         }
     }
 
